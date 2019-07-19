@@ -8,19 +8,25 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.atechnos.quotebank.AppController;
 import com.atechnos.quotebank.FinalActivity;
 import com.atechnos.quotebank.R;
+import com.atechnos.quotebank.SessionManager;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -31,9 +37,9 @@ import static android.content.Context.ALARM_SERVICE;
 public class NotificationScheduler {
     public static final int DAILY_REMINDER_REQUEST_CODE = 100;
     public static final String TAG = "NotificationScheduler";
-    private static String Quotes;
-    private static String Author;;
+    private static String Quotes, newQuotes;
 
+    static SessionManager sessionManager;
 
     public static void setReminder(Context context, Class<?> cls, int hour, int min) {
         Calendar calendar = Calendar.getInstance();
@@ -42,13 +48,19 @@ public class NotificationScheduler {
         setcalendar.set(Calendar.HOUR_OF_DAY, hour);
         setcalendar.set(Calendar.MINUTE, min);
         setcalendar.set(Calendar.SECOND, 0);
-        String[] quotesAray, authorArray;
-        quotesAray = AppController.getInstance().getQuotes();
-        authorArray = AppController.getInstance().getAuthor();
-        String randomquotes = quotesAray[new Random().nextInt(quotesAray.length)];
-        String randomauthor = authorArray[new Random().nextInt(authorArray.length)];
-        Quotes = randomquotes;
-        Author = randomauthor;
+        sessionManager = new SessionManager(context);
+        Set<String> set = new HashSet<String>();
+        set = sessionManager.getKeyUser();
+        ArrayList<String> quotesAray = new ArrayList<>(set);
+
+//        quotesAray = AppController.getInstance().getQuotes();
+        //authorArray = AppController.getInstance().getAuthor();
+        String randomquotes = quotesAray.get(new Random().nextInt(
+                65));
+        // String randomauthor = authorArray[new Random().nextInt(authorArray.length)];
+        newQuotes = randomquotes;
+        Quotes = newQuotes.replaceAll(":", "-");
+        Log.e("Hello", "Noditdscdshe---wake--" + Quotes);
 
         // cancel already scheduled reminders
         cancelReminder(context, cls);
@@ -128,22 +140,24 @@ public class NotificationScheduler {
         Intent resultIntent = new Intent(context, FinalActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(FinalActivity.class);
-        resultIntent.putExtra("quotes", Quotes);
-        resultIntent.putExtra("author", Author);
+        resultIntent.putExtra("quotes", newQuotes);
+        // resultIntent.putExtra("author", Author);
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle("Quote Bank")
-                .setContentText("Wake")
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(Quotes+"\n"+"-"+Author))
+                .setContentText("Good Morning")
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.drawable.logo))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(Quotes))
                 .setSmallIcon(R.drawable.logo)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setSound(alarmSound)
                 .setContentIntent(resultPendingIntent)
-                .setAutoCancel(true)
-                .setColor(context.getResources().getColor(android.R.color.holo_red_dark));
+                .setAutoCancel(true);
+             //   .setColor(context.getResources().getColor(android.R.color.holo_red_dark));
 
 //                .addAction(R.drawable.ic_launcher_foreground, "Call", resultPendingIntent)
 //                .addAction(R.drawable.ic_launcher_foreground, "More", resultPendingIntent)
@@ -153,7 +167,7 @@ public class NotificationScheduler {
         if (notificationManager != null) {
 
             notificationManager.notify(NOTIFICATION_ID, builder.build());
-           // int notificationId = 123;
+            // int notificationId = 123;
 
         }
 

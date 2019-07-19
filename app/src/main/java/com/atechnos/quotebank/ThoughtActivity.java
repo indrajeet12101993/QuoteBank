@@ -71,26 +71,12 @@ public class ThoughtActivity extends AppCompatActivity {
         lvThought = (ListView) findViewById(R.id.lvThought);
         imageView8 = (ImageView) findViewById(R.id.imageView8);
         imageView9 = (ImageView) findViewById(R.id.imageView9);
-        arrayArtsQuotes = getResources().getStringArray(R.array.art_Quotes);
-        arrayArtsAuthor = getResources().getStringArray(R.array.art_author);
-        arrayFitnessQuotes = getResources().getStringArray(R.array.fitness_Quotes);
-        arrayFitnessAuthor = getResources().getStringArray(R.array.fitness_author);
-        arrayBusiQuotes = getResources().getStringArray(R.array.business_Quotes);
-        arrayBusiAuthor = getResources().getStringArray(R.array.business_authotr);
-        arrayMovieQuotes = getResources().getStringArray(R.array.movie_Quotes);
-        arrayMovieAuthor = getResources().getStringArray(R.array.movie_author);
-        arrayGeneralQuotes = getResources().getStringArray(R.array.general_Quotes);
-        arrayGeneralAuthor = getResources().getStringArray(R.array.general_authotr);
-        arrayMusicQuotes = getResources().getStringArray(R.array.music_quotes);
-        arrayMusicAuthor = getResources().getStringArray(R.array.music_author);
-        arrayPoliticsQuotes = getResources().getStringArray(R.array.political_Qutoes);
-        arrayPoiliticsAuthor = getResources().getStringArray(R.array.political_Author);
-        arrayReadWriterQuotes = getResources().getStringArray(R.array.reading_writing_quotes);
-        arrayReadWriterAuthor = getResources().getStringArray(R.array.reading_writing_author);
-        arraySportQuotes = getResources().getStringArray(R.array.sport_quotes);
-        arraySportAuthor = getResources().getStringArray(R.array.sport_author);
-        arrayTechQuotes = getResources().getStringArray(R.array.tech_quotes);
-        arrayTechAuthor = getResources().getStringArray(R.array.tech_author);
+//        arrayArtsQuotes = getResources().getStringArray(R.array.art_Quotes);
+//        arrayArtsAuthor = getResources().getStringArray(R.array.art_author);
+//        arrayFitnessQuotes = getResources().getStringArray(R.array.fitness_Quotes);
+//        arrayFitnessAuthor = getResources().getStringArray(R.array.fitness_author);
+//
+
 
     }
 

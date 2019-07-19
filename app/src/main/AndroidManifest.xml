@@ -14,22 +14,22 @@
         android:roundIcon="@drawable/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".AboutActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
         <activity
             android:name=".ThoughtActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".TimerActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Setting_Select_Activity"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".FinalActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
@@ -42,10 +42,10 @@
 
         <receiver
             android:name=".timerNotification.AlarmReceiver"
-            android:enabled="false"></receiver>
+            android:enabled="false" />
         <receiver
             android:name=".timerNotification.AlarmReceiverSleep"
-            android:enabled="false"></receiver>
+            android:enabled="false" />
     </application>
 
 </manifest>

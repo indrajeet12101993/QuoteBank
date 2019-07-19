@@ -2,6 +2,7 @@ package com.atechnos.quotebank;
 
 import android.annotation.TargetApi;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -24,11 +26,14 @@ import com.atechnos.quotebank.timerNotification.NotificationSchedulerSleep;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
 import java.util.TimeZone;
 
 public class TimerActivity extends AppCompatActivity {
@@ -37,9 +42,12 @@ public class TimerActivity extends AppCompatActivity {
     LocalDataSleep localDataSleep;
     SessionManager sessionManager;
     TextView tvLine2, tvLine5, tvLine6, tvLine10, tvLine11, tvWakeClock, tvSleepClock, tvWakeQuotes, tvSleepeQuotes;
-    ImageView ivWakeClock, ivSleepClock, ivBack, imageView, ivWakeQuotes, ivSleepQuotes;
-    String[] quotes;
+    ImageView ivBack, ivNext, imageView, ivWakeQuotes, ivSleepQuotes;
+    ArrayList<String> quotes;
     String[] author;
+    Button btnSleep, btnwakeptime;
+    String check;
+    String randomquotes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,24 +57,29 @@ public class TimerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_timer);
         sessionManager = new SessionManager(this);
         localData = new LocalData(getApplicationContext());
-        quotes = getIntent().getStringArrayExtra("arrayQuotes");
-        author = getIntent().getStringArrayExtra("arrayAuthor");
 
-        AppController.getInstance().setQutoes(quotes);
-        AppController.getInstance().setAuthor(author);
-        String randomquotes = quotes[new Random().nextInt(quotes.length)];
-        String randomauthor = author[new Random().nextInt(author.length)];
+//        quotes = getIntent().getStringArrayListExtra("SELECTED_LETTER");
+        //quotes = AppController.getInstance().getQuotes();
+        Set<String> set = new HashSet<String>();
+        set = sessionManager.getKeyUser();
+        quotes = new ArrayList<>(set);
+        //quotes = (ArrayList<String>) sessionManager.getKeyUser();
+        check = sessionManager.getAuthorSleep();
+        Log.e("Hello", "vale quote-----" + quotes);
+        // Intent intent = getIntent();
+        //check = intent.getStringExtra("time");
+        randomquotes = quotes.get(new Random().nextInt(quotes.size()));
+        // AppController.getInstance().setRandomQuote(randomquotes);
+        sessionManager.setQuotesSleep(randomquotes);
         localDataSleep = new LocalDataSleep(getApplicationContext());
-        localData.setQuotes(randomquotes);
-        localData.setAuthor(randomauthor);
-        localDataSleep.setAuthor(randomauthor);
-        localDataSleep.setQuotes(randomquotes);
         NotificationScheduler.setReminder(TimerActivity.this, AlarmReceiver.class, localData.get_hour(), localData.get_min());
-
         NotificationSchedulerSleep.setReminder(TimerActivity.this, AlarmReceiverSleep.class, localDataSleep.get_hour(), localDataSleep.get_min());
         setFindByViewIds();
         setVlaueTextView();
         setOnClickListeners();
+        if (!check.equals("set")) {
+            ivBack.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -75,18 +88,37 @@ public class TimerActivity extends AppCompatActivity {
         SimpleDateFormat mdformat = new SimpleDateFormat("dd/MM/yyyy");
         final String strDate = mdformat.format(calendar.getTime());
 
-        ivSleepClock.setOnClickListener(new View.OnClickListener() {
+        btnSleep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // if (localData.getReminderStatus())
                 showTimePickerDialogSleep(localDataSleep.get_hour(), localDataSleep.get_min(), strDate);
             }
         });
-        ivWakeClock.setOnClickListener(new View.OnClickListener() {
+        btnwakeptime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // if (localData.getReminderStatus())
                 showTimePickerDialogWake(localData.get_hour(), localData.get_min(), strDate);
+            }
+        });
+
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TimerActivity.this, Setting_Select_Activity.class);
+                intent.putExtra("act", "time");
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        ivNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TimerActivity.this, FinalActivity.class);
+                intent.putExtra("quotes", randomquotes);
+                startActivity(intent);
             }
         });
     }
@@ -95,22 +127,22 @@ public class TimerActivity extends AppCompatActivity {
         String text = "<font color=#ffffff>should</font> <font color=#FFEB3B>start</font> <font color=#ffffff>and</font> <font color=#FFEB3B>end</font> <font color=#ffffff>the day on a</font> ";
         String text5 = "<font color=#ffffff>typically</font> <font color=#FFEB3B>wake up</font> ";
         String text6 = "<font color=#ffffff>and</font> <font color=#FFEB3B>go to sleep.</font> ";
-        String text10 = "<font color=#ffffff>Set</font> <font color=#FFEB3B>Wake - Up </font> <font color=#ffffff>Time :</font> ";
-        String text11 = "<font color=#ffffff>Set</font> <font color=#FFEB3B>Sleep</font> <font color=#ffffff>Time :</font> ";
+        String text10 = "<font color=#ffffff>Set</font> <font color=#FFEB3B>Wake - Up </font> <font color=#ffffff>Time </font> ";
+        String text11 = "<font color=#ffffff>Set</font> <font color=#FFEB3B>Sleep</font> <font color=#ffffff>Time </font> ";
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             tvLine2.setText(Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT));
             tvLine5.setText(Html.fromHtml(text5, Html.FROM_HTML_MODE_COMPACT));
             tvLine6.setText(Html.fromHtml(text6, Html.FROM_HTML_MODE_COMPACT));
-            tvLine10.setText(Html.fromHtml(text10, Html.FROM_HTML_MODE_COMPACT));
-            tvLine11.setText(Html.fromHtml(text11, Html.FROM_HTML_MODE_COMPACT));
+            btnwakeptime.setText(Html.fromHtml(text10, Html.FROM_HTML_MODE_COMPACT));
+            btnSleep.setText(Html.fromHtml(text11, Html.FROM_HTML_MODE_COMPACT));
         } else {
             tvLine2.setText(Html.fromHtml(text));
             tvLine5.setText(Html.fromHtml(text5));
             tvLine6.setText(Html.fromHtml(text6));
-            tvLine10.setText(Html.fromHtml(text10));
-            tvLine11.setText(Html.fromHtml(text11));
+            btnwakeptime.setText(Html.fromHtml(text10));
+            btnSleep.setText(Html.fromHtml(text11));
         }
 
     }
@@ -119,16 +151,14 @@ public class TimerActivity extends AppCompatActivity {
         tvLine2 = (TextView) findViewById(R.id.tvLine2);
         tvLine5 = (TextView) findViewById(R.id.tvLine5);
         tvLine6 = (TextView) findViewById(R.id.tvLine6);
-        tvLine10 = (TextView) findViewById(R.id.tvLine10);
-        tvLine11 = (TextView) findViewById(R.id.tvLine11);
-        tvWakeClock = (TextView) findViewById(R.id.tvWakeClock);
-        tvSleepClock = (TextView) findViewById(R.id.tvSleepClock);
-        ivSleepClock = (ImageView) findViewById(R.id.ivSleepClock);
-        ivWakeClock = (ImageView) findViewById(R.id.ivWakeClock);
-
+        btnwakeptime = (Button) findViewById(R.id.btnwakeptime);
+        btnSleep = (Button) findViewById(R.id.btnSleep);
         imageView = (ImageView) findViewById(R.id.imageView);
+        ivBack = (ImageView) findViewById(R.id.ivBack);
+        ivNext = (ImageView) findViewById(R.id.ivNext);
     }
 
+    //
     private void showTimePickerDialogSleep(int h, final int m, final String strDate) {
 
         LayoutInflater inflater = getLayoutInflater();
@@ -159,10 +189,10 @@ public class TimerActivity extends AppCompatActivity {
 
                         localDataSleep.set_hour(Integer.parseInt(hours));
                         localDataSleep.set_min(Integer.parseInt(minutes));
-                        tvSleepClock.setVisibility(View.VISIBLE);
-                        tvSleepClock.setText(getFormatedTime(hour, min));
+                        // tvSleepClock.setVisibility(View.VISIBLE);
+                        btnSleep.setText(getFormatedTime(hour, min));
                         sessionManager.setTimeSleep(getFormatedTime(hour, min));
-                        ivSleepClock.setVisibility(View.INVISIBLE);
+                        ivNext.setVisibility(View.VISIBLE);
                         NotificationSchedulerSleep.setReminder(TimerActivity.this, AlarmReceiverSleep.class, localDataSleep.get_hour(), localDataSleep.get_min());
 
 
@@ -174,6 +204,7 @@ public class TimerActivity extends AppCompatActivity {
 
     }
 
+    ////
     public static String getTimeBefore10minutes(String currentDate) {
 
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -225,10 +256,10 @@ public class TimerActivity extends AppCompatActivity {
 
                         localData.set_hour(Integer.parseInt(hours));
                         localData.set_min(Integer.parseInt(minutes));
-                        tvWakeClock.setVisibility(View.VISIBLE);
-                        tvWakeClock.setText(getFormatedTime(hour, min));
+                        // tvWakeClock.setVisibility(View.VISIBLE);
+                        btnwakeptime.setText(getFormatedTime(hour, min));
                         sessionManager.setTimeSleep(getFormatedTime(hour, min));
-                        ivWakeClock.setVisibility(View.INVISIBLE);
+                        ivNext.setVisibility(View.VISIBLE);
                         NotificationScheduler.setReminder(TimerActivity.this, AlarmReceiver.class, localData.get_hour(), localData.get_min());
                     }
                 }, h, m, false);

@@ -12,6 +12,8 @@ public class MainActivity extends AppCompatActivity {
     // Splash screen timer
     private static int SPLASH_TIME_OUT = 5000;
     ProgressBar progressBar;
+    SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         progressBar = new ProgressBar(this);
+        sessionManager = new SessionManager(this);
 
         new Handler().postDelayed(new Runnable() {
 
@@ -32,11 +35,18 @@ public class MainActivity extends AppCompatActivity {
                 // This method will be executed once the timer is over
                 // Start your app main activity
                 progressBar.setVisibility(View.INVISIBLE);
-                Intent i = new Intent(MainActivity.this, Setting_Select_Activity.class);
-                startActivity(i);
-
+                if (sessionManager.isLoggedIn() == true) {
+                    Intent i = new Intent(MainActivity.this, FinalActivity.class);
+                    i.putExtra("quotes", sessionManager.getQuotesSleep());
+                    startActivity(i);
+                } else {
+                    Intent i = new Intent(MainActivity.this, Setting_Select_Activity.class);
+                     i.putExtra("act", "time");
+                    startActivity(i);
+                }
                 // close this activity
                 finish();
+
             }
         }, SPLASH_TIME_OUT);
     }

@@ -8,23 +8,28 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+import java.util.ArrayList;
+
 public class AppController extends Application {
 
     public static final String TAG = AppController.class.getSimpleName();
 
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
-    public String[] quotes;
+    public ArrayList<String> quotes;
     public String[] author;
+    public String time;
+    public String first;
+    public String randomQuote;
 
     public String[] getAuthor() {
         return author;
     }
-    public String[] getQuotes() {
+    public ArrayList<String> getQuotes() {
         return quotes;
     }
 
-    public void setQutoes(String[] quotes) {
+    public void setQutoes(ArrayList<String> quotes) {
         this.quotes = quotes;
     }
     public void setAuthor(String[] author) {
@@ -40,6 +45,30 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+    }
+
+    public String getRandomQuote() {
+        return randomQuote;
+    }
+
+    public void setRandomQuote(String randomQuote) {
+        this.randomQuote = randomQuote;
+    }
+
+    public String getFirst() {
+        return first;
+    }
+
+    public void setFirst(String first) {
+        this.first = first;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public static synchronized AppController getInstance() {

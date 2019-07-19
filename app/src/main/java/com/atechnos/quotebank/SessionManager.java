@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 public class SessionManager {
 
     private static String TAG = SessionManager.class.getSimpleName();
@@ -28,6 +32,7 @@ public class SessionManager {
     private static final String KEY_AUTHOR_WAKE = "author_wake";
     private static final String KEY_TIME_WAKE = "time_wake";
     private static final String KEY_TIME_SLEEP = "time_sleep";
+    private static final String KEY_USER = "key";
 
     public SessionManager(Context context) {
         this._context = context;
@@ -56,7 +61,6 @@ public class SessionManager {
     public String getAuthorSleep() {
         return pref.getString(KEY_AUTHOR_SLEEP, null);
     }
-
 
 
     public void setQuotesWake(String keyValue) {
@@ -105,36 +109,36 @@ public class SessionManager {
     }
 
 
+    public void setLogin(boolean isLoggedIn) {
+
+        editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
+
+        // commit changes
+        editor.commit();
+
+        Log.d(TAG, "User login session modified!");
+    }
+
+    //
+    public boolean isLoggedIn() {
+        return pref.getBoolean(KEY_IS_LOGGEDIN, false);
+    }
 
 
+    public void setKeyUser(ArrayList<String> keyUser) {
+        Set<String> set = new HashSet<String>();
+        set.addAll(keyUser);
+        editor.putStringSet(KEY_USER, set);
+        editor.commit();
+        Log.d(TAG, "User login session modified!");
+    }
 
+    //
+    public Set<String> getKeyUser() {
 
-//    public void setLogin(boolean isLoggedIn) {
-//
-//        editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
-//
-//        // commit changes
-//        editor.commit();
-//
-//        Log.d(TAG, "User login session modified!");
-//    }
-//
-//    public boolean isLoggedIn() {
-//        return pref.getBoolean(KEY_IS_LOGGEDIN, false);
-//    }
-
-
-
-//    public void setKeyUser(String keyUser) {
-//        editor.putString(KEY_USER, keyUser);
-//        editor.commit();
-//
-//        Log.d(TAG, "User login session modified!");
-//    }
-//
-//    public String getKeyUser() {
-//        return pref.getString(KEY_USER, null);
-//    }
+        Set<String> set = pref.getStringSet("key", null);
+        return set;
+    }
 //
 //    public void setKeyAnswer(String keyAnswer) {
 //        editor.putString(KEY_ANSWER, keyAnswer);
